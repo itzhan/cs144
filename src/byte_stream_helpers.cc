@@ -10,7 +10,6 @@
 void read( Reader& reader, uint64_t len, std::string& out )
 {
   out.clear();
-
   while ( reader.bytes_buffered() and out.size() < len ) {
     auto view = reader.peek();
 

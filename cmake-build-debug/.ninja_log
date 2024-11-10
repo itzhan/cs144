@@ -1,0 +1,18 @@
+# ninja log v6
+17	1450	1730811836944544191	util/CMakeFiles/util_debug.dir/random.cc.o	f05f390e3863f9bd
+17	1462	1730811836944544191	util/CMakeFiles/util_debug.dir/ipv4_header.cc.o	76e34b554a8879a9
+15	1474	1730811836944544191	util/CMakeFiles/util_debug.dir/address.cc.o	78cad80d939c4c24
+17	1508	1730811836944544191	util/CMakeFiles/util_debug.dir/file_descriptor.cc.o	6870b1303474ab14
+1462	1838	1730811838391562237	src/CMakeFiles/minnow_debug.dir/byte_stream.cc.o	e42b1153473933f1
+1474	1848	1730811838403554178	src/CMakeFiles/minnow_debug.dir/byte_stream_helpers.cc.o	a2df330bd59d5573
+18	1941	1730811836948541436	util/CMakeFiles/util_debug.dir/socket.cc.o	200a87976a6a6e4a
+16	2001	1730811836944544191	util/CMakeFiles/util_debug.dir/eventloop.cc.o	c9465dc701a58174
+1452	2307	1730811838379570295	util/CMakeFiles/util_debug.dir/tun.cc.o	ef97921e8d8416ae
+1848	2449	1730811838775304374	src/libminnow_debug.a	6246f3479f67b698
+2307	2459	1730811839234997402	util/libutil_debug.a	ce96ecff949aaf2d
+1839	2535	1730811838767309746	apps/CMakeFiles/webget.dir/webget.cc.o	a3343f5d7a7767ec
+1508	2625	1730811838435532690	apps/CMakeFiles/stream_copy.dir/bidirectional_stream_copy.cc.o	e1d5f90996b9eea2
+2625	2656	1730811839550787863	apps/libstream_copy.a	b111a22fbb129fe7
+2656	2733	1730811839582766644	apps/webget	c8418c952424b240
+14	784	1730814232917007830	apps/CMakeFiles/webget.dir/webget.cc.o	a3343f5d7a7767ec
+784	851	1730814233689009720	apps/webget	c8418c952424b240
