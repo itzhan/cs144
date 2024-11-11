@@ -29,43 +29,45 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     first_index = next_index;
   }
 
-  // case2: 当index > 当前流索引,则存入map,也需要处理overlap情况
+  // case2: 当index > 当前流索引,则存入map,也需要处理overlap情况. 保证map中的数据没有overlap
   if ( first_index > next_index ) {
-    auto result = tem_buffer.insert({first_index, data});
+    auto result = tem_buffer.insert( { first_index, data } );
     store_bytes += data.size();
-     // 若已经存在,且值相同,则直接结束
-    if (!result.second && (data.size() <= tem_buffer[first_index].size())){
-      store_bytes -= data.size();
-      return;
+    // 若该index已经存在
+    if ( !result.second ) {
+      // 插入的值小于已有的值,则直接drop
+      if ( data.size() <= tem_buffer[first_index].size() ) {
+        store_bytes -= data.size();
+        return;
+      } 
+      // 若插入的值大于已有的值,则替换
+      else {
+        store_bytes -= data.size();
+        store_bytes += data.size() - tem_buffer[first_index].size();
+        tem_buffer[first_index] = data;
+      }
     }
-     // 若已经存在,则取最大值
-    else if (!result.second && (data.size() > tem_buffer[first_index].size())){
-      store_bytes -= data.size();
-      store_bytes += data.size() - tem_buffer[first_index].size();
-      tem_buffer[first_index] = data;
-    }
-    // 插入成功,从头开始合并
+    // 插入或替换成功,则从头开始合并
     auto pre = tem_buffer.begin();
     auto current = ++tem_buffer.begin();
-    while (current != tem_buffer.end()){
+    while ( current != tem_buffer.end() ) {
       uint64_t pre_L = pre->first;
       uint64_t pre_R = pre->first + pre->second.size();
       uint64_t cur_L = current->first;
       uint64_t cur_R = current->first + current->second.size();
 
-      // 完全被overlap
-      if ((cur_L >= pre_L) && (cur_R <= pre_R)){
+      // 完全被overlap,则删除
+      if ( ( cur_L >= pre_L ) && ( cur_R <= pre_R ) ) {
         store_bytes -= current->second.size();
-        current = tem_buffer.erase(current);
+        current = tem_buffer.erase( current );
       }
       // 合并
-      else if ((cur_L >= pre_L) && (cur_L <= pre_R) && (cur_R > pre_R)){
+      else if ( ( cur_L >= pre_L ) && ( cur_L <= pre_R ) && ( cur_R > pre_R ) ) {
         uint64_t overlap = pre_R - cur_L;
         store_bytes -= overlap;
-        pre->second += current->second.substr(overlap);
-        current = tem_buffer.erase(current);
-      }
-      else {
+        pre->second += current->second.substr( overlap );
+        current = tem_buffer.erase( current );
+      } else {
         ++pre;
         ++current;
       }
