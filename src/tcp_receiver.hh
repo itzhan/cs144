@@ -4,13 +4,14 @@
 #include "tcp_receiver_message.hh"
 #include "tcp_sender_message.hh"
 
+
 class TCPReceiver
 {
 public:
   // Construct with given Reassembler
   explicit TCPReceiver( Reassembler&& reassembler ) : reassembler_( std::move( reassembler ) ) {}
 
-  /*
+  /*  
    * The TCPReceiver receives TCPSenderMessages, inserting their payload into the Reassembler
    * at the correct stream index.
    */
@@ -27,4 +28,7 @@ public:
 
 private:
   Reassembler reassembler_;
+  bool is_connect = false;
+  uint64_t ack_number = 0;
+  Wrap32 ISN {0};
 };
