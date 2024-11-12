@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cmath>
 
 /*
  * The Wrap32 type represents a 32-bit unsigned integer that:
@@ -30,4 +31,10 @@ public:
 
 protected:
   uint32_t raw_value_ {};
+
+private:
+ uint64_t abs_diff(uint64_t a, uint64_t b) const {
+        return (a > b) ? (a - b) : (b - a);
+    }
 };
+
