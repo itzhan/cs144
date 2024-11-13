@@ -10,13 +10,18 @@
 #include <memory>
 #include <optional>
 #include <queue>
+#include <cmath>
 
 class TCPSender
 {
 public:
   /* Construct TCP sender with given default Retransmission Timeout and possible ISN */
   TCPSender( ByteStream&& input, Wrap32 isn, uint64_t initial_RTO_ms )
-    : input_( std::move( input ) ), isn_( isn ), initial_RTO_ms_( initial_RTO_ms )
+    : input_( std::move( input ) )
+    , isn_( isn )
+    , seqno_(isn)
+    , initial_RTO_ms_( initial_RTO_ms )
+    , current_RTO_ms_( initial_RTO_ms )
   {}
 
   /* Generate an empty TCPSenderMessage */
@@ -45,7 +50,23 @@ public:
 
 private:
   // Variables initialized in constructor
+  struct Window
+  {
+    Wrap32 left { 0 };
+    Wrap32 right { 1 };
+    // 存储所有发送的segment数据
+    std::queue<TCPSenderMessage> in_flight_package;
+    uint64_t sequence_numbers_in_flight = 0;
+    bool FIN_sent = false;
+  };
+
   ByteStream input_;
   Wrap32 isn_;
+  // seqno记录自己发送的总数据量
+  Wrap32 seqno_;
   uint64_t initial_RTO_ms_;
+  uint64_t current_RTO_ms_;
+  uint64_t timer_elapsed_ = 0;
+  uint64_t consecutive_retransmissions_ = 0;
+  Window window_ {.left = seqno_, .right = seqno_ + 1};
 };
