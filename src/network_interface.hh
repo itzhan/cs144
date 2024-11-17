@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include <queue>
 
 #include "address.hh"
@@ -81,4 +82,10 @@ private:
 
   // Datagrams that have been received
   std::queue<InternetDatagram> datagrams_received_ {};
+  // 存储即将发送的数据并记录
+  std::unordered_map<uint32_t, InternetDatagram> datagrams_wait_output {};
+  std::unordered_map<uint32_t, size_t> pending_time_ {};
+  // map ip.address --> etherent.address
+  std::unordered_map<uint32_t, EthernetAddress> ip_to_eth_ {};
+  std::unordered_map<uint32_t, size_t> store_time_ {};
 };
