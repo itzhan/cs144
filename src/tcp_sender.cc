@@ -70,13 +70,13 @@ void TCPSender::push( const TransmitFunction& transmit )
 
 TCPSenderMessage TCPSender::make_empty_message() const
 {
-  return TCPSenderMessage { .seqno = seqno_ , .RST = reader().has_error()};
+  return TCPSenderMessage { .seqno = seqno_, .RST = reader().has_error() };
 }
 
 void TCPSender::receive( const TCPReceiverMessage& msg )
 {
   // 出现了error
-  if (!msg.ackno.has_value() && msg.window_size == 0)
+  if ( !msg.ackno.has_value() && msg.window_size == 0 )
     input_.set_error();
   // sender需要的数据序列超过了我们目前的最大,则直接忽略
   if ( msg.ackno > seqno_ )
@@ -104,29 +104,35 @@ void TCPSender::receive( const TCPReceiverMessage& msg )
     }
   }
 
+  // 如果队列为空，重置计时器
+  if ( window_.in_flight_package.empty() ) {
+    timer_elapsed_ = 0;
+  }
+
   // 更新window右边界
   window_.right = window_.left + msg.window_size;
 }
 
 void TCPSender::tick( uint64_t ms_since_last_tick, const TransmitFunction& transmit )
 {
-  // 增加流逝时间
-  timer_elapsed_ += ms_since_last_tick;
+  // 只有当发送队列不为空时才增加计时器
+  if ( !window_.in_flight_package.empty() ) {
+    timer_elapsed_ += ms_since_last_tick;
+  }
 
   // 超时出现
   if ( timer_elapsed_ >= current_RTO_ms_ ) {
     if ( !window_.in_flight_package.empty() ) {
       transmit( window_.in_flight_package.front() );
-      if ((window_.left == window_.right)){
+      if ( ( window_.left == window_.right ) ) {
         current_RTO_ms_ += initial_RTO_ms_;
-      }
-      else {
+      } else {
         current_RTO_ms_ *= 2;
       }
       ++consecutive_retransmissions_;
     }
 
-    if (!(window_.left == window_.right))
+    if ( !( window_.left == window_.right ) )
       timer_elapsed_ = 0;
   }
 }
