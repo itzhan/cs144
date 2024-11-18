@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <vector>
 
 #include "exception.hh"
 #include "network_interface.hh"
@@ -33,6 +34,19 @@ public:
   void route();
 
 private:
+  struct TreeNode
+  {
+    std::optional<Address> next_hop;
+    size_t interface_num;
+    std::shared_ptr<TreeNode> left {};
+    std::shared_ptr<TreeNode> right {};
+
+    TreeNode(): next_hop(std::nullopt), interface_num(-1), left(nullptr), right(nullptr){};
+  };
+
+  // 前缀二叉树
+  std::shared_ptr<TreeNode> root = std::make_shared<TreeNode>();
+  
   // The router's collection of network interfaces
   std::vector<std::shared_ptr<NetworkInterface>> _interfaces {};
 };
